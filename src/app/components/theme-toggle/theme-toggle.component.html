@@ -1,0 +1,16 @@
+<div class="form-check form-switch">
+  <span
+    class="fa fa-toggle-off custom-icon"
+    *ngIf="!isDarkMode"
+    (click)="toggleTheme()"
+  ></span>
+  <span
+    class="fa fa-toggle-on custom-icon"
+    *ngIf="isDarkMode"
+    (click)="toggleTheme()"
+  ></span>
+
+  <label class="form-check-label" for="flexSwitchCheckDefault">
+    {{ isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode" }}
+  </label>
+</div>

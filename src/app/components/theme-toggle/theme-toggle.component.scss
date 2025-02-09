@@ -1,0 +1,9 @@
+.form-switch {
+  display: flex;
+  flex-direction: column;
+
+  .custom-icon {
+    font-size: 25px;
+    cursor: pointer;
+  }
+}

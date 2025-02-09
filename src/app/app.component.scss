@@ -1,0 +1,58 @@
+.view-modal-content {
+  display: flex;
+  justify-content: space-between;
+
+  .view-text-value {
+    font-size: 15px;
+  }
+
+  .view-title-label {
+    font-size: 10px;
+    font-weight: 700;
+  }
+}
+
+.close-btn {
+  text-align: end;
+  padding: 20px;
+}
+
+.top-header-section-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+
+  .search-wrapper {
+    display: flex;
+  }
+}
+
+label {
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+input {
+  font-size: 13px;
+}
+
+select {
+  display: block;
+  width: 100%;
+  padding: 6px 4px;
+}
+
+.input-alert-box {
+  color: red;
+
+  .alert-input-icon {
+    font-size: 8px;
+    margin-top: -10px;
+  }
+
+  .alert-input-msg {
+    font-size: 8px;
+    margin-top: 1px;
+    display: block;
+  }
+}
