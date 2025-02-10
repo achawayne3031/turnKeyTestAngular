@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Contact } from 'src/app/interface/contact';
+import { UtilServiceService } from 'src/app/services/util-service.service';
 
 @Component({
   selector: 'app-grid-view',
@@ -7,7 +8,7 @@ import { Contact } from 'src/app/interface/contact';
   styleUrls: ['./grid-view.component.scss'],
 })
 export class GridViewComponent {
-  @Input() contactData: Contact[] | undefined;
+  @Input() contactData: Contact[] | any;
   @Output() OnSelectedContactItem: EventEmitter<any> = new EventEmitter<any>();
   @Output() OnTickedContactItem: EventEmitter<any> = new EventEmitter<any>();
 
@@ -20,4 +21,6 @@ export class GridViewComponent {
     contact.checked = !contact.checked;
     this.OnTickedContactItem.emit(contact);
   }
+
+  constructor(public utilService: UtilServiceService) {}
 }

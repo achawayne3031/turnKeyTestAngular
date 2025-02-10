@@ -22,7 +22,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   contactData: Contact[] | undefined;
   initalContactData: Contact[] | undefined;
 
-  selectedContact: Contact | undefined;
+  selectedContact: Contact | any;
 
   @ViewChild('viewContactModalBtn') viewContactModalBtn!: ElementRef;
   @ViewChild('closeAddContactBtn') closeAddContactBtn!: ElementRef;
@@ -40,12 +40,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   isListView = this.utilService.getViewSettings() == 'list' ? true : false;
   favoriteContactItems: any[] = [];
   showFavorite = false;
+  imageUrl = '';
+  imageIsValid = false;
 
   constructor(
     private httpService: HttpRequestService,
     private alertService: AlertToasterService,
     private fb: FormBuilder,
-    private utilService: UtilServiceService
+    public utilService: UtilServiceService
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +69,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         this.isListView = false;
       }
+    }
+  }
+
+  async checkValidImage(imageUrl: string) {
+    this.imageIsValid = await this.utilService.isValidImageUrl(imageUrl);
+
+    if (!this.imageIsValid) {
+      this.alertService.errorMsg('Invalid image url..');
     }
   }
 
@@ -216,8 +226,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   submitContact() {
     if (this.contactForm.status == 'VALID') {
-      this.isLoading = true;
+      if (!this.imageIsValid) {
+        this.alertService.errorMsg('Invalid image url..');
 
+        return;
+      }
+
+      this.isLoading = true;
       let url = '';
       if (this.isEdit) {
         url = '/contact/update';

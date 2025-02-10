@@ -27,12 +27,25 @@
             </div>
           </div>
 
-          <div class="logo-wrapper">
-            <p class="logo">
-              {{ utilService.getUserFirstLetter(contact.firstName) }}
-              {{ utilService.getUserFirstLetter(contact.lastName) }}
-            </p>
+          <div
+            *ngIf="contact.contactImage != null; else noImage"
+            class="image-wrapper"
+          >
+            <img
+              [src]="contact.contactImage"
+              alt="no image"
+              class="image-logo"
+            />
           </div>
+
+          <ng-template #noImage>
+            <div class="logo-wrapper">
+              <p class="logo">
+                {{ utilService.getUserFirstLetter(contact.firstName) }}
+                {{ utilService.getUserFirstLetter(contact.lastName) }}
+              </p>
+            </div>
+          </ng-template>
 
           <div>
             <h5>

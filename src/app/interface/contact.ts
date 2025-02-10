@@ -8,4 +8,5 @@ export interface Contact {
   physicalAddress: string;
   checked: boolean;
   favorite: boolean;
+  contactImage: string;
 }
