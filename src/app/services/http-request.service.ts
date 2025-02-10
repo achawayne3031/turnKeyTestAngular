@@ -19,12 +19,7 @@ export class HttpRequestService {
 
   getRequest(urlRoute: string) {
     return this.http
-      .get<any>(this.apiUrl + urlRoute, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
+      .get<any>(this.apiUrl + urlRoute)
       .pipe(catchError((error) => this.handleError(error)));
   }
 

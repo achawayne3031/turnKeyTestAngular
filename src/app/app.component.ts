@@ -1,38 +1,140 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  NgZone,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { HttpRequestService } from './services/http-request.service';
 import { Contact } from './interface/contact';
 import { AlertToasterService } from './services/alert-toaster.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UtilServiceService } from './services/util-service.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'turnKeyTestAngular';
   contactData: Contact[] | undefined;
+  initalContactData: Contact[] | undefined;
+
   selectedContact: Contact | undefined;
 
   @ViewChild('viewContactModalBtn') viewContactModalBtn!: ElementRef;
   @ViewChild('closeAddContactBtn') closeAddContactBtn!: ElementRef;
   @ViewChild('addContactBtn') addContactBtn!: ElementRef;
+  @ViewChild('addContactBtnTarget') addContactBtnTarget!: ElementRef;
+  @ViewChild('showViewSettingConfig') showViewSettingConfig!: ElementRef;
+
   contactForm!: FormGroup;
   manualChecker = false;
   isLoading = false;
   searchText = '';
   isEdit = false;
   tickedContactData: any[] = [];
+  isDarkMode = false;
+  isListView = this.utilService.getViewSettings() == 'list' ? true : false;
+  favoriteContactItems: any[] = [];
+  showFavorite = false;
 
   constructor(
     private httpService: HttpRequestService,
     private alertService: AlertToasterService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private utilService: UtilServiceService
   ) {}
 
   ngOnInit(): void {
     this.getAllContacts();
     this.buildContactForm();
+
+    this.utilService.isDarkModeSub.subscribe((data: any) => {
+      this.isDarkMode = data;
+    });
+  }
+
+  ngAfterViewInit() {
+    let viewSettings = this.utilService.getViewSettings();
+    if (viewSettings === false) {
+      this.showViewSettingConfig.nativeElement.click();
+    } else {
+      if (viewSettings == 'list') {
+        this.isListView = true;
+      } else {
+        this.isListView = false;
+      }
+    }
+  }
+
+  showFavoriteContact() {
+    this.showFavorite = !this.showFavorite;
+
+    if (this.showFavorite) {
+      this.contactData = this.favoriteContactItems;
+    } else {
+      this.contactData = this.initalContactData;
+    }
+  }
+
+  onMarkAsFavoriteContact(contact: any) {
+    if (contact.favorite) {
+      this.favoriteContactItems.push(contact);
+    } else {
+      this.favoriteContactItems = this.favoriteContactItems.filter(
+        (item) => item.id !== contact.id
+      );
+    }
+  }
+
+  onFilterByGroup(group: any) {
+    this.httpService
+      .getRequest(`/contact/filter-group?contactGroup=${group.target.value}`)
+      .subscribe(
+        (data: any) => {
+          let contactData = data.data;
+          this.contactData = contactData.map((item: any) => {
+            item.checked = false;
+            item.favorite = false;
+            return item;
+          });
+          this.initalContactData = this.contactData;
+        },
+        (error) => {
+          this.alertService.errorMsg(error.message);
+        }
+      );
+  }
+
+  exportInCsvFile() {
+    this.httpService.getRequest('/contact/export').subscribe(
+      (data: any) => {
+        let csvContent = atob(data.data);
+        var blob = new Blob([csvContent], {
+          type: 'data:application/octet-stream;base64',
+        });
+        var url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `contacts.csv`;
+        link.click();
+      },
+      (error) => {
+        this.alertService.errorMsg(error.message);
+      }
+    );
+  }
+
+  activateViewSettings(type: string) {
+    if (type == 'list') {
+      this.isListView = true;
+    } else {
+      this.isListView = false;
+    }
+    this.utilService.setViewSettings(type);
   }
 
   bulkDeleteContact() {
@@ -97,7 +199,13 @@ export class AppComponent implements OnInit {
         .getRequest(`/contact/search?search=${this.searchText}`)
         .subscribe(
           (data: any) => {
-            this.contactData = data.data;
+            let contactData = data.data;
+            this.contactData = contactData.map((item: any) => {
+              item.checked = false;
+              item.favorite = false;
+              return item;
+            });
+            this.initalContactData = this.contactData;
           },
           (error) => {
             this.alertService.errorMsg(error.message);
@@ -203,6 +311,21 @@ export class AppComponent implements OnInit {
 
   onSelectedContactGroup(event: any) {}
 
+  showAddModal() {
+    this.contactForm = this.fb.group({
+      firstName: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      phoneNumber: ['', [Validators.required]],
+      physicalAddress: ['', [Validators.required]],
+      contactGroup: [''],
+      contactImage: [''],
+      id: [''],
+    });
+    this.isEdit = false;
+    /// this.addContactBtn.nativeElement.click();
+  }
+
   onSelectedContactData(data: any) {
     this.selectedContact = data;
 
@@ -228,7 +351,7 @@ export class AppComponent implements OnInit {
           id: [data.id],
         });
         this.isEdit = true;
-        this.addContactBtn.nativeElement.click();
+        this.addContactBtnTarget.nativeElement.click();
 
         break;
 
@@ -243,8 +366,10 @@ export class AppComponent implements OnInit {
         let contactData = data.data;
         this.contactData = contactData.map((item: any) => {
           item.checked = false;
+          item.favorite = false;
           return item;
         });
+        this.initalContactData = this.contactData;
       },
       (error) => {
         this.alertService.errorMsg(error.message);

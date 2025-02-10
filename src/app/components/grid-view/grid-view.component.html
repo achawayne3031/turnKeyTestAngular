@@ -1,1 +1,45 @@
-<p>grid-view works!</p>
+<div class="grid-view-wrapper">
+  <h4 class="text-title">Grid View</h4>
+
+  <div class="grid-content-wrapper">
+    <div class="grid-item-content" *ngFor="let contact of contactData">
+      <div class="check-box-wrapper">
+        <input
+          type="checkbox"
+          id="flexSwitchCheckDefault"
+          (change)="tickContact(contact, $event)"
+          [checked]="contact.checked"
+        />
+      </div>
+
+      <h5>
+        {{ contact.firstName }}
+        {{ contact.lastName }}
+      </h5>
+      <h4>{{ contact.phoneNumber }}</h4>
+
+      <div class="grid-btn-wrapper">
+        <button
+          (click)="selectedContactItem(contact, 'view')"
+          class="btn btn-secondary view-btn"
+        >
+          <span class="fa fa-eye"></span>
+        </button>
+
+        <button
+          (click)="selectedContactItem(contact, 'edit')"
+          class="btn btn-success view-btn ml-1"
+        >
+          <span class="fa fa-edit"></span>
+        </button>
+
+        <button
+          (click)="selectedContactItem(contact, 'delete')"
+          class="btn btn-danger view-btn ml-1"
+        >
+          <span class="fa fa-trash"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

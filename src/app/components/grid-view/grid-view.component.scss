@@ -1,0 +1,44 @@
+.grid-view-wrapper {
+  border-radius: 5px;
+  padding: 15px;
+  border: 1px solid cyan;
+
+  .grid-content-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+
+    .grid-item-content {
+      border-radius: 5px;
+      border: 1px solid rgb(240, 244, 244);
+      padding: 15px;
+
+      .check-box-wrapper {
+        text-align: end;
+      }
+
+      .grid-btn-wrapper {
+        display: flex;
+        justify-content: space-around;
+      }
+
+      h4 {
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      h5 {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 0px;
+      }
+    }
+  }
+
+  .text-title {
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+}

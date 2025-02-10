@@ -7,4 +7,5 @@ export interface Contact {
   contactGroup: string;
   physicalAddress: string;
   checked: boolean;
+  favorite: boolean;
 }

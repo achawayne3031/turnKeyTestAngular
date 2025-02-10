@@ -12,6 +12,19 @@
               (change)="tickContact(contact, $event)"
               [checked]="contact.checked"
             />
+
+            <div>
+              <span
+                *ngIf="contact.favorite"
+                (click)="markAsFavorite(contact, false)"
+                class="fa fa-star favorite-icon"
+              ></span>
+              <span
+                *ngIf="!contact.favorite"
+                (click)="markAsFavorite(contact, true)"
+                class="fa fa-star-o favorite-icon"
+              ></span>
+            </div>
           </div>
 
           <div class="logo-wrapper">

@@ -56,3 +56,32 @@ select {
     display: block;
   }
 }
+
+.modal-custom-content {
+  background-color: black;
+
+  * {
+    color: #ffffff;
+  }
+
+  input {
+    color: black;
+  }
+}
+
+.modal-custom-content-light {
+  background-color: #ffffff;
+
+  * {
+    color: black;
+  }
+
+  input {
+    color: black;
+  }
+}
+
+.setting-view-wrapper {
+  display: flex;
+  justify-content: space-around;
+}

@@ -11,6 +11,8 @@ export class ListViewComponent {
   @Input() contactData: Contact[] | undefined;
   @Output() OnSelectedContactItem: EventEmitter<any> = new EventEmitter<any>();
   @Output() OnTickedContactItem: EventEmitter<any> = new EventEmitter<any>();
+  @Output() OnMarkAsFavoriteContactItem: EventEmitter<any> =
+    new EventEmitter<any>();
 
   selectedContactItem(contact: any, type: string) {
     contact.type = type;
@@ -20,6 +22,11 @@ export class ListViewComponent {
   tickContact(contact: any, $event: any) {
     contact.checked = !contact.checked;
     this.OnTickedContactItem.emit(contact);
+  }
+
+  markAsFavorite(contact: any, state: boolean) {
+    contact.favorite = state;
+    this.OnMarkAsFavoriteContactItem.emit(contact);
   }
 
   constructor(public utilService: UtilServiceService) {}

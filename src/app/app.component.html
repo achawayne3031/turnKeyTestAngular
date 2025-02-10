@@ -11,13 +11,40 @@
         data-target="#AddContactModal"
         class="btn btn-primary"
         #addContactBtn
+        (click)="showAddModal()"
       >
         Add Contact
       </button>
-      <button class="btn btn-success ml-2">Export CSV</button>
+      <button
+        hidden
+        data-toggle="modal"
+        data-target="#AddContactModal"
+        class="btn btn-primary"
+        #addContactBtnTarget
+      ></button>
+      <button (click)="exportInCsvFile()" class="btn btn-success ml-2">
+        Export CSV
+      </button>
+      <button (click)="showFavoriteContact()" class="btn btn-warning ml-2">
+        {{ showFavorite ? "Go Back" : " Show Favorite Contacts" }}
+      </button>
     </div>
 
     <div class="search-wrapper">
+      <div>
+        <select
+          (change)="onFilterByGroup($event)"
+          name="contactGroup"
+          id="contactGroup"
+        >
+          <option value="">Filter By Group</option>
+          <option value="family">Family</option>
+          <option value="friends">Friends</option>
+          <option value="work">Work</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
       <div>
         <input
           placeholder="search......"
@@ -34,11 +61,23 @@
     </div>
   </div>
 
-  <app-list-view
-    [contactData]="contactData"
-    (OnSelectedContactItem)="onSelectedContactData($event)"
-    (OnTickedContactItem)="onTickedContactData($event)"
-  ></app-list-view>
+  <ng-container>
+    <app-list-view
+      *ngIf="isListView; else showGridView"
+      [contactData]="contactData"
+      (OnSelectedContactItem)="onSelectedContactData($event)"
+      (OnTickedContactItem)="onTickedContactData($event)"
+      (OnMarkAsFavoriteContactItem)="onMarkAsFavoriteContact($event)"
+    ></app-list-view>
+
+    <ng-template #showGridView>
+      <app-grid-view
+        [contactData]="contactData"
+        (OnSelectedContactItem)="onSelectedContactData($event)"
+        (OnTickedContactItem)="onTickedContactData($event)"
+      ></app-grid-view>
+    </ng-template>
+  </ng-container>
 
   <router-outlet></router-outlet>
 </div>
@@ -60,7 +99,12 @@
   aria-hidden="true"
 >
   <div class="modal-dialog">
-    <div class="modal-content modal-custom-content">
+    <div
+      class="modal-content"
+      [ngClass]="
+        isDarkMode ? 'modal-custom-content' : 'modal-custom-content-light'
+      "
+    >
       <button
         type="button"
         class="close close-btn"
@@ -144,7 +188,12 @@
   aria-hidden="true"
 >
   <div class="modal-dialog">
-    <div class="modal-content modal-custom-content">
+    <div
+      class="modal-content"
+      [ngClass]="
+        isDarkMode ? 'modal-custom-content' : 'modal-custom-content-light'
+      "
+    >
       <button
         type="button"
         class="close close-btn"
@@ -162,7 +211,7 @@
         <form class="" [formGroup]="contactForm">
           <div class="row">
             <div class="col">
-              <label for="firstName">First Name</label>
+              <label for="firstName">First Name </label>
               <input
                 type="text"
                 class="form-control"
@@ -341,6 +390,52 @@
             </div>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button
+  #showViewSettingConfig
+  hidden
+  data-toggle="modal"
+  data-target="#viewSettingsModal"
+></button>
+
+<!-- Show View Settings Config Modal -->
+<div
+  data-backdrop="static"
+  class="modal fade"
+  id="viewSettingsModal"
+  tabindex="-1"
+  aria-labelledby="viewContactModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="setting-view-wrapper">
+          <button
+            type="button"
+            class="close close-btn"
+            data-dismiss="modal"
+            aria-label="Close"
+            class="btn btn-success"
+            (click)="activateViewSettings('list')"
+          >
+            List view. Yes ?
+          </button>
+
+          <button
+            class="close close-btn"
+            data-dismiss="modal"
+            aria-label="Close"
+            class="btn btn-danger"
+            (click)="activateViewSettings('grid')"
+          >
+            Grid view. Yes ?
+          </button>
+        </div>
       </div>
     </div>
   </div>
